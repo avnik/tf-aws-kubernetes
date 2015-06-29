@@ -7,16 +7,15 @@ resource "aws_security_group" "kubernetes" {
     ingress = {
         from_port = 80
         to_port = 80
-        #cidr_blocks = [ "${aws_subnet.public.cidr_block}" ]
-        cidr_blocks = [ "0.0.0.0/0" ]
+        cidr_blocks = [ "${var.allowed_network}" ]
         protocol = "tcp"
         self = false
     }
 
     ingress = {
-        from_port = 443
-        to_port = 443
-        cidr_blocks = [ "0.0.0.0/0" ]
+        from_port = 8080
+        to_port = 8080
+        cidr_blocks = [ "${var.allowed_network}" ]
         protocol = "tcp"
         self = false
     }
@@ -24,7 +23,7 @@ resource "aws_security_group" "kubernetes" {
     ingress = {
         from_port = 22
         to_port = 22
-        cidr_blocks = [ "0.0.0.0/0" ]
+        cidr_blocks = [ "${var.allowed_network}" ]
         protocol = "tcp"
         self = false
     }
@@ -40,8 +39,28 @@ resource "aws_security_group" "kubernetes" {
         from_port = 0
         to_port = 0
         protocol = "-1"
-        #cidr_blocks = [ "${aws_subnet.public.cidr_block}" ]
+        self = true
+    }
+
+    egress = {
+        from_port = 80
+        to_port = 80
+        protocol = "tcp"
         cidr_blocks = [ "0.0.0.0/0" ]
+    }
+
+    egress = {
+        from_port = 443
+        to_port = 443
+        protocol = "tcp"
+        cidr_blocks = [ "0.0.0.0/0" ]
+    }
+
+    egress = {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = [ "${var.allowed_network}" ]
     }
 
 }
@@ -55,7 +74,7 @@ resource "aws_instance" "kubernetes-master" {
 
     ami = "${lookup(var.coreos_amis, var.region)}"
 
-    instance_type = "m3.medium"
+    instance_type = "t2.small"
 
     key_name = "${var.key_name}"
 
@@ -79,6 +98,7 @@ resource "aws_instance" "kubernetes-master" {
 }
 
 resource "aws_instance" "kubernetes-node" {
+
     depends_on = [ "aws_instance.kubernetes-master" ]
 
     connection {
@@ -113,4 +133,10 @@ resource "aws_instance" "kubernetes-node" {
 
 output "master-ip" {
     value = "${aws_instance.kubernetes-master.public_ip}"
+}
+output "ui-url" {
+    value = "http://${aws_instance.kubernetes-master.public_ip}:8080/ui"
+}
+output "create-tunnel" {
+    value = "ssh -f -nNT -L 8080:127.0.0.1:8080 core@${aws_instance.kubernetes-master.public_ip}"
 }

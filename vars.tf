@@ -7,7 +7,7 @@ variable "secret_key" {
 }
 
 variable "allowed_network" {
-    description = "The CIDR of network that is allowed to access the bastion host"
+    description = "The CIDR of network that is allowed to access the cluster"
 }
 
 variable "region" {
@@ -23,20 +23,6 @@ variable "key_name" {
 variable "key_path" {
     descriptoin = "Path to your private key."
     default = "~/.ssh/id_rsa"
-}
-
-variable "amazon_amis" {
-    description = "Amazon Linux AMIs"
-    default = {
-        us-west-2 = "ami-b5a7ea85"
-    }
-}
-
-variable "amazon_nat_amis" {
-    description = "Amazon Linux NAT AMIs"
-    default = {
-        us-east-1 = "ami-4c9e4b24"
-    }
 }
 
 variable "coreos_amis" {
