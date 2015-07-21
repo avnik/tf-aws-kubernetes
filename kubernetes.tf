@@ -1,7 +1,7 @@
 
 resource "aws_security_group" "kubernetes" {
     name = "kubernetes"
-    description = "Main kubernetes SG"
+    description = "Main Kubernetes SG"
     vpc_id = "${aws_vpc.k8vpc.id}"
 
     ingress = {

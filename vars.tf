@@ -28,6 +28,13 @@ variable "key_path" {
 variable "coreos_amis" {
     description = "CoreOS stable channel"
     default = {
-        us-east-1 = "ami-93ea17f8"
+        us-east-1      = "ami-6b1cd400"
+        us-west-1      = "ami-bf8477fb"
+        us-west-2      = "ami-f5a5a5c5"
+        eu-west-1      = "ami-50f4b927"
+        eu-central-1   = "ami-02211b1f"
+        ap-northeast-1 = "ami-22d27b22"
+        ap-southeast-2 = "ami-2b2e6911"
+        ap-southeast-1 = "ami-0ef1f15c"
     }
 }
